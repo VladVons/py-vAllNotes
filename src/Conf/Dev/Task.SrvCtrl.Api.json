@@ -1,0 +1,10 @@
+{
+        "dir_route": "MVC/Ctrl",
+        "loader": {
+            "model": {
+                "type": "fs",
+                "module": "Task.SrvModel.Api",
+                "class": "ApiModel"
+            }
+        }
+}
