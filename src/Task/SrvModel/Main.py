@@ -35,9 +35,7 @@ class TSrvModel(TSrvBaseEx):
 
     def _GetDefRoutes(self) -> list:
         return [
-            web.get('/api/{name:.*}', self._rApi),
-            web.post('/api/{name:.*}', self._rApi),
-            web.post('/api', self._rApi)
+            web.post('/api/{name:.*}', self._rApi)
         ]
 
     async def RunApp(self):
@@ -54,8 +52,4 @@ class TSrvModel(TSrvBaseEx):
 
     async def RunApi(self):
         Log.Print(1, 'i', f'{self.__class__.__name__}.RunApi() only')
-
-        #import asyncio
-        #ApiModel.AEvent = asyncio.Event()
         await self._DbConnect()
-        #ApiModel.AEvent.set()

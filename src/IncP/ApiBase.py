@@ -48,7 +48,7 @@ class TApiBase():
         return App.LoadClassConf(self)
 
     def GetMethod(self, aPlugin: TPlugin, aRoute: str, aData: dict) -> dict:
-        Method = aData.get('method')
+        Method = aData.get('method', 'main')
 
         Key = f'{aRoute}/{Method}'
         Res = aPlugin.Cache.get(Key)
