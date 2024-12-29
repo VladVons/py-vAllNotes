@@ -48,5 +48,4 @@ class TSrvBaseEx(TSrvBase):
             'status': Status
         }
 
-        ResWeb = web.json_response(Res, status = Status, dumps=TJsonEncoder.Dumps)
-        return ResWeb
+        return web.json_response(Res, status = Status, dumps=TJsonEncoder.Dumps)

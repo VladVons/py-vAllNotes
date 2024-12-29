@@ -12,10 +12,9 @@ class TApiCtrl(TApiBase):
         super().__init__()
 
         Conf = self.GetConf()
-
         self.Plugin = TCtrls(Conf['dir_route'], self)
-
         self.InitLoader(Conf['loader'])
         self.ApiModel = self.Loader['model'].Get
+        self.ConfApp = Conf['app']
 
 ApiCtrl = TApiCtrl()

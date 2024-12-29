@@ -2,7 +2,8 @@
 # Author:  Vladimir Vons <VladVons@gmail.com>
 # License: GNU, see LICENSE for more details
 
-
+import time
+import json
 from aiohttp import web
 #
 from IncP.Log import Log
@@ -13,8 +14,33 @@ from .Api import ApiCtrl
 class TSrvCtrl(TSrvBaseEx):
     def _GetDefRoutes(self) -> list:
         return [
-            web.post('/api/{name:.*}', self._rApi),
+            web.post('/apiJson/{name:.*}', self._rApi),
+            web.post('/apiBytes/{name:.*}', self._rApiBytes)
         ]
+
+    async def _rApiBytes(self, aRequest: web.Request) -> web.Response:
+        Res = {}
+        TimeStart = time.time()
+        Name = aRequest.match_info.get('name')
+        if (not self._CheckRequestAuth(aRequest)):
+            Status = 403
+            Res['err'] = 'Authorization failed'
+        else:
+            CustomHeader = aRequest.headers.get('Custom-Header', '')
+            DataIn = json.loads(CustomHeader)
+            DataIn['param']['aRequest'] = aRequest
+            Api = self.GetApi()
+            R = await Api.Exec(Name, DataIn) or {}
+            if ('response' in R):
+                return R['response']
+            #Status = 403 if ('err' in R) else 200
+            Status = 200
+            Res.update(R)
+        Res['info'] = {
+            'time': round(time.time() - TimeStart, 4),
+            'status': Status
+        }
+        return web.json_response(Res, status = Status)
 
     def GetApi(self) -> object:
         return ApiCtrl
