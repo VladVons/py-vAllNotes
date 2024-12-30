@@ -3,8 +3,6 @@
 # License: GNU, see LICENSE for more details
 
 
-import io
-import os
 import json
 from aiohttp import web
 #
@@ -66,7 +64,7 @@ class TMain(TCtrlBase):
         return {'data': IsExists}
 
     async def Truncate(self, aFile: str, aSize: int = 0) -> dict:
-        Len = self.Fs.Truncate(aFile, aSize)
+        Len = self.Fs.FileTruncate(aFile, aSize)
         return {'data': Len}
 
     async def DirCreate(self, aFile: str) -> dict:
@@ -74,5 +72,5 @@ class TMain(TCtrlBase):
         return {'data': IsExists}
 
     async def List(self, aPath: str) -> dict:
-        Files = self.Fs.List(aPath)
+        Files = self.Fs.FileList(aPath)
         return {'data': Files}

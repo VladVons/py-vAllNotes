@@ -9,7 +9,7 @@ import asyncio
 import aiohttp
 
 
-class TAllNotesFS():
+class TAllNotes():
     def __init__(self, aUrl):
         self.Root = aUrl
 
@@ -155,47 +155,73 @@ class TAllNotesFS():
         }
         return await self.SendJson('file', Data)
 
-async def Main():
-    #Url = 'http://localhost:8173'
-    Url = 'http://1x1.com.ua:8173'
+    async def AppVer(self) -> dict:
+        Data = {
+            "method": "AppVer",
+            "param": {}
+        }
+        return await self.SendJson('info', Data)
 
-    FS = TAllNotesFS(Url)
+    async def SysInfo(self) -> dict:
+        Data = {
+            "method": "SysInfo",
+            "param": {}
+        }
+        return await self.SendJson('info', Data)
+
+
+async def Test_File(aUrl: str):
+    AN = TAllNotes(aUrl)
     Dir = 'dir1/dir2'
 
-    Res = await FS.DirCreate(Dir)
+    Res = await AN.DirCreate(Dir)
     print('DirCreate', Res)
 
     File = 'vAllNotesSend.py'
     with open(File, 'rb') as F:
         Data = F.read()
-        Res = await FS.FileWritePos(f'{Dir}/{File}', Data, 0)
+        Res = await AN.FileWritePos(f'{Dir}/{File}', Data, 0)
         print('FileWritePos', Res)
 
-    Res = await FS.FileReadPos(f'{Dir}/{File}', 20, 50)
+    Res = await AN.FileReadPos(f'{Dir}/{File}', 20, 50)
     print('FileReadPos', Res)
 
-    Res = await FS.FileWrite(f'{Dir}/test.txt', 'Hello world of python')
+    Res = await AN.FileWrite(f'{Dir}/test.txt', 'Hello world of python')
     print('FileWrite', Res)
 
-    Res = await FS.FileRead(f'{Dir}/test.txt')
+    Res = await AN.FileRead(f'{Dir}/test.txt')
     print('FileRead', Res)
 
-    Res = await FS.FileSize(f'{Dir}/test.txt')
+    Res = await AN.FileSize(f'{Dir}/test.txt')
     print('FileSize', Res)
 
-    #Res = await FS.FileDelete(f'{Dir}/test.txt')
+    #Res = await AN.FileDelete(f'{Dir}/test.txt')
     #print('FileDelete', Res)
 
-    Res = await FS.FileExists(f'{Dir}/test.txt')
+    Res = await AN.FileExists(f'{Dir}/test.txt')
     print('FileExists', Res)
 
-    Res = await FS.FileTruncate(f'{Dir}/dir3/dump.dat', 10*1000)
+    Res = await AN.FileTruncate(f'{Dir}/dir3/dump.dat', 10*1000)
     print('FileTruncate', Res)
 
-
-    Res = await FS.FileList('')
+    Res = await AN.FileList('')
     #Res = await FS.FileList('dir1/dir2/dir3')
     print('FileList', Res)
 
+async def Test_Info(aUrl: str):
+    AN = TAllNotes(aUrl)
+
+    Res = await AN.AppVer()
+    print('AppVer', Res)
+
+    Res = await AN.SysInfo()
+    print('SysInfo', Res)
+
+async def Main():
+    #UrlApi = 'http://localhost:8173'
+    UrlApi = 'http://1x1.com.ua:8173'
+
+    await Test_File(UrlApi)
+    await Test_Info(UrlApi)
 
 asyncio.run(Main())
