@@ -1,0 +1,25 @@
+# Created: 2024.05.17
+# Author: Vladimir Vons <VladVons@gmail.com>
+#
+# systemctl daemon-reload
+# systemctl enable vAllNotes.service
+# systemctl start vAllNotes.service
+
+
+[Unit]
+Description=vAllNotes service
+After=network.target
+
+[Service]
+Type=simple
+
+User=vladvons
+EnvironmentFile=/etc/default/vAllNotes
+WorkingDirectory=/usr/lib/vAllNotes
+ExecStart=/bin/bash -c './vAllNotes.sh'
+
+Restart=always
+RestartSec=15
+
+[Install]
+WantedBy=multi-user.target

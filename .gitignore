@@ -2,4 +2,5 @@
 *.log
 *.dat
 __pycache__
+src/Data
 .idea

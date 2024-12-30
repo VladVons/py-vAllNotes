@@ -4,6 +4,7 @@
 
 
 import io
+import os
 import json
 from aiohttp import web
 #
@@ -11,15 +12,15 @@ from Inc.VFS.Disk import TFsDisk
 from IncP.CtrlBase import TCtrlBase
 from Task.SrvCtrl.Api import TApiCtrl
 
-class TABytesIO():
-    def __init__(self, aBuf: io.BytesIO):
-        self.Buf = aBuf
+# class TABytesIO():
+#     def __init__(self, aBuf: io.BytesIO):
+#         self.Buf = aBuf
 
-    async def read(self, aSize: int):
-        return self.Buf.read(aSize)
+#     async def read(self, aSize: int):
+#         return self.Buf.read(aSize)
 
-    async def write(self, aData):
-        return self.Buf.write(aData)
+#     async def write(self, aData):
+#         return self.Buf.write(aData)
 
 
 class TMain(TCtrlBase):
@@ -71,3 +72,7 @@ class TMain(TCtrlBase):
     async def DirCreate(self, aFile: str) -> dict:
         IsExists = self.Fs.DirCreate(aFile)
         return {'data': IsExists}
+
+    async def List(self, aPath: str) -> dict:
+        Files = self.Fs.List(aPath)
+        return {'data': Files}
