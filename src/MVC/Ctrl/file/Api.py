@@ -31,7 +31,7 @@ class TMain(TCtrlBase):
         return {'data': Res}
 
     async def ReadPos(self, aFile: str, aRequest: web.Request, aPos: int, aLen: int, aChankSize: int = 65535) -> dict:
-        Len = self.Fs.FileSize(aFile)
+        Len = self.Fs.Size(aFile)
         if (Len):
             Headers={'Content-Type': 'application/octet-stream', 'Custom-Header': json.dumps({'data': Len})}
             Response = web.StreamResponse(status=200, headers=Headers)
@@ -52,25 +52,25 @@ class TMain(TCtrlBase):
         return {'data': Res}
 
     async def Size(self, aFile: str) -> dict:
-        Len = self.Fs.FileSize(aFile)
+        Len = self.Fs.Size(aFile)
         return {'data': Len}
 
     async def Exists(self, aFile: str) -> dict:
-        IsExists = self.Fs.FileExists(aFile)
+        IsExists = self.Fs.Exists(aFile)
         return {'data': IsExists}
 
     async def Delete(self, aFile: str) -> dict:
-        IsExists = self.Fs.FileDelete(aFile)
+        IsExists = self.Fs.Delete(aFile)
         return {'data': IsExists}
 
     async def Truncate(self, aFile: str, aSize: int = 0) -> dict:
         Len = self.Fs.FileTruncate(aFile, aSize)
         return {'data': Len}
 
-    async def DirCreate(self, aFile: str) -> dict:
-        IsExists = self.Fs.DirCreate(aFile)
-        return {'data': IsExists}
-
     async def List(self, aPath: str) -> dict:
-        Files = self.Fs.FileList(aPath)
+        Files = self.Fs.List(aPath)
         return {'data': Files}
+
+    async def DirCreate(self, aDir: str) -> dict:
+        IsExists = self.Fs.DirCreate(aDir)
+        return {'data': IsExists}
