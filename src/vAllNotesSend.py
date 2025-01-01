@@ -58,12 +58,42 @@ class TAllNotes():
             Res = {'err': f'{EType}, {E}' , 'status': -1}
         return Res
 
-    async def FileRead(self, aFile: str) -> dict:
+    # --- VFS
+
+    async def Copy(self, aSrc: str, aDst: str) -> dict:
         Data = {
-            'method': 'Read',
+            'method': 'Copy',
             'param': {
-                'aFile': aFile
+                'aSrc': aSrc,
+                'aDst': aDst
             }
+        }
+        return await self.SendJson('file', Data)
+
+    async def Delete(self, aFileOrDir: str) -> dict:
+        Data = {
+            'method': 'Delete',
+            'param': {
+                'aFile': aFileOrDir
+            }
+        }
+        return await self.SendJson('file', Data)
+
+    async def DirCreate(self, aDir: str) -> dict:
+        Data = {
+            'method': 'DirCreate',
+            'param': {
+                'aDir': aDir
+            }
+        }
+        return await self.SendJson('file', Data)
+
+    async def Exists(self, aFileOrDir: str) -> dict:
+        Data = {
+            'method': 'Exists',
+            'param': {
+                'aFile': aFileOrDir
+        }
         }
         return await self.SendJson('file', Data)
 
@@ -79,48 +109,9 @@ class TAllNotes():
         }
         return await self.SendBytes('file', Data)
 
-    async def FileWrite(self, aFile: str, aData: str) -> dict:
+    async def FileReadStr(self, aFile: str) -> dict:
         Data = {
-            'method': 'Write',
-            'param': {
-                'aFile': aFile,
-                'aData': aData
-            }
-        }
-        return await self.SendJson('file', Data)
-
-    async def FileWritePos(self, aFile: str, aBytes: bytes, aPos: int) -> dict:
-        Data = {
-            'method': 'WritePos',
-            'param': {
-                'aFile': aFile,
-                'aPos': aPos,
-                'aChankSize': 65536
-            }
-        }
-        return await self.SendBytes('file', Data, aBytes)
-
-    async def Size(self, aFileOrDir: str) -> dict:
-        Data = {
-            'method': 'Size',
-            'param': {
-                'aFile': aFileOrDir
-            }
-        }
-        return await self.SendJson('file', Data)
-
-    async def Exists(self, aFileOrDir: str) -> dict:
-        Data = {
-            'method': 'Exists',
-            'param': {
-                'aFile': aFileOrDir
-        }
-        }
-        return await self.SendJson('file', Data)
-
-    async def FileDelete(self, aFile: str) -> dict:
-        Data = {
-            'method': 'Delete',
+            'method': 'ReadStr',
             'param': {
                 'aFile': aFile
             }
@@ -137,6 +128,27 @@ class TAllNotes():
         }
         return await self.SendJson('file', Data)
 
+    async def FileWritePos(self, aFile: str, aBytes: bytes, aPos: int) -> dict:
+        Data = {
+            'method': 'WritePos',
+            'param': {
+                'aFile': aFile,
+                'aPos': aPos,
+                'aChankSize': 65536
+            }
+        }
+        return await self.SendBytes('file', Data, aBytes)
+
+    async def FileWriteStr(self, aFile: str, aData: str) -> dict:
+        Data = {
+            'method': 'WriteStr',
+            'param': {
+                'aFile': aFile,
+                'aData': aData
+            }
+        }
+        return await self.SendJson('file', Data)
+
     async def List(self, aPath: str) -> dict:
         Data = {
             'method': 'List',
@@ -146,23 +158,26 @@ class TAllNotes():
         }
         return await self.SendJson('file', Data)
 
-    async def DirCreate(self, aDir: str) -> dict:
+    async def Move(self, aSrc: str, aDst: str) -> dict:
         Data = {
-            'method': 'DirCreate',
+            'method': 'Move',
             'param': {
-                'aDir': aDir
+                'aSrc': aSrc,
+                'aDst': aDst
             }
         }
         return await self.SendJson('file', Data)
 
-    async def Delete(self, aFileOrDir: str) -> dict:
+    async def Size(self, aFileOrDir: str) -> dict:
         Data = {
-            'method': 'Delete',
+            'method': 'Size',
             'param': {
                 'aFile': aFileOrDir
             }
         }
         return await self.SendJson('file', Data)
+
+    # --- Misc
 
     async def AppVer(self) -> dict:
         Data = {
@@ -195,11 +210,11 @@ async def Test_File(aUrl: str):
     Res = await AN.FileReadPos(f'{Dir}/{File}', 20, 50)
     print('FileReadPos', Res)
 
-    Res = await AN.FileWrite(f'{Dir}/test.txt', 'Hello world of python')
-    print('FileWrite', Res)
+    Res = await AN.FileWriteStr(f'{Dir}/test.txt', 'Hello world of python')
+    print('FileWriteStr', Res)
 
-    Res = await AN.FileRead(f'{Dir}/test.txt')
-    print('FileRead', Res)
+    Res = await AN.FileReadStr(f'{Dir}/test.txt')
+    print('FileReadStr', Res)
 
     Res = await AN.Size(Dir)
     print('Size', Res)
@@ -213,6 +228,12 @@ async def Test_File(aUrl: str):
 
     Res = await AN.FileTruncate(f'{Dir}/dir3/dump.dat', 10*1000)
     print('FileTruncate', Res)
+
+    Res = await AN.Copy(Dir, 'DirCopy')
+    print('Copy', Res)
+
+    Res = await AN.Move('DirCopy', 'Dir3')
+    print('Move', Res)
 
     Res = await AN.List('')
     #Res = await FS.List('dir1/dir2/dir3')
@@ -254,8 +275,8 @@ async def Main():
     #UrlApi = 'http://it.findwares.com:8173'
     UrlApi = 'https://it.findwares.com/amn'
 
-    #await Test_File(UrlApi)
+    await Test_File(UrlApi)
     #await Test_Info(UrlApi)
-    await Test_Stress(UrlApi, 50, 10)
+    #await Test_Stress(UrlApi, 20, 5)
 
 asyncio.run(Main())

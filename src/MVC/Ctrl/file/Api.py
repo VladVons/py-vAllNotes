@@ -26,8 +26,28 @@ class TMain(TCtrlBase):
         super().__init__(aApiCtrl)
         self.Fs = TFsDisk(self.ApiCtrl.ConfApp['dir_data'])
 
-    async def Read(self, aFile: str) -> dict:
-        Res = self.Fs.FileRead(aFile)
+    async def Copy(self, aSrc: str, aDst: str) -> dict:
+        Res = self.Fs.Copy(aSrc, aDst)
+        return {'data': Res}
+
+    async def Delete(self, aFile: str) -> dict:
+        IsExists = self.Fs.Delete(aFile)
+        return {'data': IsExists}
+
+    async def DirCreate(self, aDir: str) -> dict:
+        IsExists = self.Fs.DirCreate(aDir)
+        return {'data': IsExists}
+
+    async def Exists(self, aFile: str) -> dict:
+        IsExists = self.Fs.Exists(aFile)
+        return {'data': IsExists}
+
+    async def List(self, aPath: str) -> dict:
+        Files = self.Fs.List(aPath)
+        return {'data': Files}
+
+    async def Move(self, aSrc: str, aDst: str) -> dict:
+        Res = self.Fs.Move(aSrc, aDst)
         return {'data': Res}
 
     async def ReadPos(self, aFile: str, aRequest: web.Request, aPos: int, aLen: int, aChankSize: int = 65535) -> dict:
@@ -40,37 +60,22 @@ class TMain(TCtrlBase):
             await Response.write_eof()
             return {'response': Response}
 
-    async def Write(self, aFile: str, aData: str) -> dict:
-        if (isinstance(aData, str)):
-            aData = aData.encode()
-
-        Res = self.Fs.FileWrite(aFile, aData)
-        return {'data': Res}
-
-    async def WritePos(self, aFile: str, aRequest: web.Request, aPos: int, aChankSize: int = 65535) -> dict:
-        Res = await self.Fs.FileWriteChunkPos(aFile, aRequest.content, aChankSize, aPos, aRequest.content_length)
+    async def ReadStr(self, aFile: str) -> dict:
+        Res = self.Fs.FileReadStr(aFile)
         return {'data': Res}
 
     async def Size(self, aFile: str) -> dict:
         Len = self.Fs.Size(aFile)
         return {'data': Len}
 
-    async def Exists(self, aFile: str) -> dict:
-        IsExists = self.Fs.Exists(aFile)
-        return {'data': IsExists}
-
-    async def Delete(self, aFile: str) -> dict:
-        IsExists = self.Fs.Delete(aFile)
-        return {'data': IsExists}
-
     async def Truncate(self, aFile: str, aSize: int = 0) -> dict:
         Len = self.Fs.FileTruncate(aFile, aSize)
         return {'data': Len}
 
-    async def List(self, aPath: str) -> dict:
-        Files = self.Fs.List(aPath)
-        return {'data': Files}
+    async def WritePos(self, aFile: str, aRequest: web.Request, aPos: int, aChankSize: int = 65535) -> dict:
+        Res = await self.Fs.FileWriteChunkPos(aFile, aRequest.content, aChankSize, aPos, aRequest.content_length)
+        return {'data': Res}
 
-    async def DirCreate(self, aDir: str) -> dict:
-        IsExists = self.Fs.DirCreate(aDir)
-        return {'data': IsExists}
+    async def WriteStr(self, aFile: str, aData: str) -> dict:
+        Res = self.Fs.FileWriteStr(aFile, aData)
+        return {'data': Res}
