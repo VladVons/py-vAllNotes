@@ -9,7 +9,7 @@ import asyncio
 import aiohttp
 
 
-class TAllNotes():
+class TAllNotesApi():
     def __init__(self, aUrl):
         self.Root = aUrl
 
@@ -149,11 +149,27 @@ class TAllNotes():
         }
         return await self.SendJson('file', Data)
 
+    async def Help(self) -> dict:
+        Data = {
+            'method': 'Help',
+            'param': {}
+        }
+        return await self.SendJson('file', Data)
+
     async def List(self, aPath: str) -> dict:
         Data = {
             'method': 'List',
             'param': {
                 'aPath': aPath
+            }
+        }
+        return await self.SendJson('file', Data)
+
+    async def MassCall(self, aParam: list) -> dict:
+        Data = {
+            'method': 'MassCall',
+            'param': {
+                'aParam': aParam
             }
         }
         return await self.SendJson('file', Data)
@@ -195,13 +211,26 @@ class TAllNotes():
 
 
 async def Test_File(aUrl: str):
-    AN = TAllNotes(aUrl)
-    Dir = 'dir1/dir2'
+    AN = TAllNotesApi(aUrl)
 
+    Res = await AN.Help()
+    print('Help', Res)
+
+    Dir = 'dir1/dir2'
     Res = await AN.DirCreate(Dir)
     print('DirCreate', Res)
 
-    File = 'vAllNotesSend.py'
+    Calls = [
+        ['DirCreate', ['Dir1']],
+        ['DirCreate', ['Dir3/Dir31']],
+        ['FileWriteStr', ['Dir4/file1.txt', '* file1 body *']],
+        ['FileWriteStr', ['Dir4/file2.txt', '** file2 body **']],
+        ['List', ['Dir4']]
+    ]
+    Res = await AN.MassCall(Calls)
+    print('MassCall', Res)
+
+    File = 'vAllNotesApi.py'
     with open(File, 'rb') as F:
         Data = F.read()
         Res = await AN.FileWritePos(f'{Dir}/{File}', Data, 0)
@@ -235,12 +264,15 @@ async def Test_File(aUrl: str):
     Res = await AN.Move('DirCopy', 'Dir3')
     print('Move', Res)
 
-    Res = await AN.List('')
-    #Res = await FS.List('dir1/dir2/dir3')
+    #Res = await AN.List('')
+    #print('List', Res)
+    Res = await AN.List('dir1/dir2')
     print('List', Res)
+    #Res = await AN.List(f'{Dir}/dir3/dump.dat')
+    #print('List', Res)
 
 async def Test_Info(aUrl: str):
-    AN = TAllNotes(aUrl)
+    AN = TAllNotesApi(aUrl)
 
     Res = await AN.AppVer()
     print('AppVer', Res)
@@ -257,7 +289,7 @@ async def Test_Stress(aUrl: str, aCnt: int, aMaxConn: int):
             Res = await aAN.FileWritePos(File, Data, 0)
             print('FileWritePos', File, Res)
 
-    AN = TAllNotes(aUrl)
+    AN = TAllNotesApi(aUrl)
     RemoteDir = 'Stress'
     await AN.Delete(RemoteDir)
     Sem = asyncio.Semaphore(aMaxConn)
