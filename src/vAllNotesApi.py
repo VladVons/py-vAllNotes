@@ -174,6 +174,15 @@ class TAllNotesApi():
         }
         return await self.SendJson('file', Data)
 
+    async def MassCalls(self, aParam: list) -> dict:
+        Data = {
+            'method': 'MassCalls',
+            'param': {
+                'aParam': aParam
+            }
+        }
+        return await self.SendJson('file', Data)
+
     async def Move(self, aSrc: str, aDst: str) -> dict:
         Data = {
             'method': 'Move',
@@ -213,8 +222,8 @@ class TAllNotesApi():
 async def Test_File(aUrl: str):
     AN = TAllNotesApi(aUrl)
 
-    Res = await AN.Help()
-    print('Help', Res)
+    #Res = await AN.Help()
+    #print('Help', Res)
 
     Dir = 'dir1/dir2'
     Res = await AN.DirCreate(Dir)
@@ -227,6 +236,10 @@ async def Test_File(aUrl: str):
         ['FileWriteStr', ['Dir4/file2.txt', '** file2 body **']],
         ['List', ['Dir4']]
     ]
+    Res = await AN.MassCalls(Calls)
+    print('MassCalls', Res)
+
+    Calls = ['DirCreate', ['Dir3/Dir31'], ['Dir4/Dir41']]
     Res = await AN.MassCall(Calls)
     print('MassCall', Res)
 
@@ -303,9 +316,9 @@ async def Test_Stress(aUrl: str, aCnt: int, aMaxConn: int):
     print('List', Files)
 
 async def Main():
-    #UrlApi = 'http://localhost:8173'
+    UrlApi = 'http://localhost:8173'
     #UrlApi = 'http://it.findwares.com:8173'
-    UrlApi = 'https://it.findwares.com/amn'
+    #UrlApi = 'https://it.findwares.com/amn'
 
     await Test_File(UrlApi)
     #await Test_Info(UrlApi)

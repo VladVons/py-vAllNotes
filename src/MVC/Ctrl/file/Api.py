@@ -70,12 +70,21 @@ class TMain(TCtrlBase):
 
     async def MassCall(self, aParam: list) -> dict:
         '''
-        Multiple calls in one request.
-        aParam = [
-            ['DirCreate', ['Dir3/Dir31']]
-        ]
+        Multiple call in one request.
+        aParam = ['DirCreate', ['Dir3/Dir31'], ['Dir4/Dir41']]
         '''
         Res = self.Fs.MassCall(aParam)
+        return {'data': Res}
+
+    async def MassCalls(self, aParam: list) -> dict:
+        '''
+        Multiple calls in one request.
+        aParam = [
+            ['DirCreate', ['Dir3/Dir31']],
+            ['List', ['Dir3']]
+        ]
+        '''
+        Res = self.Fs.MassCalls(aParam)
         return {'data': Res}
 
     async def Move(self, aSrc: str, aDst: str) -> dict:
